@@ -75,8 +75,10 @@ quiet
 
         then:
         out.empty
-        err == TextUtil.toPlatformLineSeparators("""error
+        ConcurrentTestUtil.poll {
+            err == TextUtil.toPlatformLineSeparators("""error
 """)
+        }
     }
 
     private String stacktrace(Exception e) {

@@ -315,7 +315,7 @@ class LoggingServiceRegistryTest extends Specification {
     }
 
     def routesStyledTextToListenersWhenStarted() {
-        StandardOutputListener listener = Mock()
+        StandardOutputListener listener = new DelayedOutputListener()
 
         when:
         def registry = LoggingServiceRegistry.newCommandLineProcessLogging()
@@ -334,13 +334,12 @@ class LoggingServiceRegistryTest extends Specification {
         textOutput.println("info")
 
         then:
-        1 * listener.onOutput("info")
-        1 * listener.onOutput(SystemProperties.instance.lineSeparator)
-        0 * listener._
+        listener.receives("info")
+        listener.receives(SystemProperties.instance.lineSeparator)
     }
 
     def buffersTextWrittenToStyledText() {
-        StandardOutputListener listener = Mock()
+        StandardOutputListener listener = new DelayedOutputListener()
 
         given:
         def registry = LoggingServiceRegistry.newCommandLineProcessLogging()
@@ -353,18 +352,15 @@ class LoggingServiceRegistryTest extends Specification {
         when:
         def textOutput = registry.get(StyledTextOutputFactory).create("category")
         textOutput.text("in")
-
-        then:
-        0 * listener._
-
-        when:
         textOutput.println("fo")
         textOutput.text("buffered")
 
         then:
-        1 * listener.onOutput("info")
-        1 * listener.onOutput(SystemProperties.instance.lineSeparator)
-        0 * listener._
+        listener.receives("info")
+        listener.receives(SystemProperties.instance.lineSeparator)
+
+        and:
+        listener.notReceived()
     }
 
     def routesLoggingOutputToOriginalSystemOutAndErrWhenStarted() {
@@ -643,7 +639,7 @@ class LoggingServiceRegistryTest extends Specification {
     }
 
     def doesNotRouteToSystemOutAndErrorWhenNested() {
-        StandardOutputListener listener = Mock()
+        StandardOutputListener listener = new DelayedOutputListener()
 
         when:
         def registry = LoggingServiceRegistry.newNestedLogging()
@@ -655,9 +651,8 @@ class LoggingServiceRegistryTest extends Specification {
         textOutput.println("info")
 
         then:
-        1 * listener.onOutput("info")
-        1 * listener.onOutput(SystemProperties.instance.lineSeparator)
-        0 * listener._
+        listener.receives("info")
+        listener.receives(SystemProperties.instance.lineSeparator)
 
         and:
         outputs.stdOut == ''
