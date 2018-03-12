@@ -203,8 +203,8 @@ public class OutputEventRenderer implements OutputEventListener, LoggingRouter {
     }
 
     private void removeStandardOutputListener() {
-        flush();
         synchronized (lock) {
+            flush();
             if (stdOutListener != null) {
                 stdoutListeners.remove(stdOutListener);
                 stdOutListener = null;
@@ -213,8 +213,8 @@ public class OutputEventRenderer implements OutputEventListener, LoggingRouter {
     }
 
     private void removeStandardErrorListener() {
-        flush();
         synchronized (lock) {
+            flush();
             if (stdErrListener != null) {
                 stderrListeners.remove(stdErrListener);
                 stdErrListener = null;
@@ -224,13 +224,14 @@ public class OutputEventRenderer implements OutputEventListener, LoggingRouter {
 
     public void addOutputEventListener(OutputEventListener listener) {
         synchronized (lock) {
+            flush();
             formatters.add(listener);
         }
     }
 
     public void removeOutputEventListener(OutputEventListener listener) {
-        flush();
         synchronized (lock) {
+            flush();
             formatters.remove(listener);
         }
     }
@@ -290,12 +291,14 @@ public class OutputEventRenderer implements OutputEventListener, LoggingRouter {
 
     public void addStandardErrorListener(StandardOutputListener listener) {
         synchronized (lock) {
+            flush();
             stderrListeners.add(listener);
         }
     }
 
     public void addStandardOutputListener(StandardOutputListener listener) {
         synchronized (lock) {
+            flush();
             stdoutListeners.add(listener);
         }
     }
@@ -310,15 +313,15 @@ public class OutputEventRenderer implements OutputEventListener, LoggingRouter {
 
 
     public void removeStandardOutputListener(StandardOutputListener listener) {
-        flush();
         synchronized (lock) {
+            flush();
             stdoutListeners.remove(listener);
         }
     }
 
     public void removeStandardErrorListener(StandardOutputListener listener) {
-        flush();
         synchronized (lock) {
+            flush();
             stderrListeners.remove(listener);
         }
     }
